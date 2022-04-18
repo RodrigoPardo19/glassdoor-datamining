@@ -114,7 +114,7 @@ Basado en el análisis estadístico de los datos se podría afirmar que de acuer
 
 Se pueden crear modelos que midan la tasa de cambio o incorporación de las nuevas habilidades que les van a solicitando a los postulantes. Es sabido que en 
 
-<<<<<<< HEAD
+
 Es decir cuando se quieren analizar de forma más especificas los cargos relacionados a los datos nos encontramos con una granularidad muy grandes de cargos, esto puede ser más interesante de analizar en un futuro y por lo tanto llegarnos a plantear ciertas preguntas que se responderán en un hito futuro con otro tipo de análisis. ¿Por qué existen tantas granularidades en los cargos relacionados a los datos?, ¿Qué skills/habilidades se requieren para cada tipo de cargo? con estás preguntas  estudiaremos si realmente existe una gran diferencia entre los distintos puestos relacionados a los datos o si realmente existe un desorden en los nombres de cada cargo, ya que realmente las habilidades son distintas pero con otros nombre, es decir averiguaremos si un data engineer es lo mismo que un data scientist o big data analyst, data quality, o por el contrario cuales son sus diferencias.
 
 
@@ -163,5 +163,4 @@ matrizCorrelacion <- cor(columnasNumericas)
 
 
 #4. Debe incluir un enlace al código fuente. El código fuente debe estar en un repositorio (GitLab o GitHub) donde todos los miembros del equipo participen. El repositorio debe estar visible para la evaluación. El código fuente utilizado debe mostrar todo lo utilizado generar sus estadísticas y análisis (e.g. por ej. generar la página usando jupyter notebook, o markdown R, o poner enlaces a sus scripts. Mientras más reproducible el trabajo, mejor. El código fuente no se cuenta dentro del largo de las 5 páginas). La calidad del código fuente será evaluada en términos de que permita replicar el estudio.
-=======
->>>>>>> 4c8dbf5e6f07348adae0c4e9cdb6f69aa7af714c
+
