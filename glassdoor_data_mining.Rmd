@@ -28,7 +28,8 @@ library(NLP)
 
 
 ```{r}
-glassdoor_data <- read.csv("C:/Users/jliza/Documents/dataset-glassdoor/glassdoor.csv", header = T, encoding = "UTF-8", as.is = F)
+glassdoor_data <- read.csv("dataset-glassdoor/glassdoor.csv", header = T, encoding = "UTF-8", as.is = F)
+
 ```
 
 ```{r}
@@ -95,8 +96,25 @@ Como se puede ver, solamente en trabajos relacionados a datos existen casi 26 mi
 dataRelatedJobs[10:30, c("header.jobTitle")]
 ```
 
-Data Engineer, Data Scientist, ETL Developer,  Big Data Analyst, Data Quality, Database Administrator, Big Data Engineer, Spec Analitycs, etc, etc...
 
+Data Engineer, Data Scientist, ETL Developer,  Big Data Analyst, Data Quality, Database Administrator, Big Data Engineer, Spec Analitycs, etc, etc...
+Es decir cuando se quieren analizar de forma más especificas los cargos relacionados a los datos nos encontramos con una granularidad muy grandes de cargos, esto puede ser más interesante de analizar en un futuro y por lo tanto llegarnos a plantear ciertas preguntas que se responderán en un hito futuro con otro tipo de análisis. ¿Por qué existen tantas granularidades en los cargos relacionados a los datos?, ¿Qué skills/habilidades se requieren para cada tipo de cargo? con estás preguntas  estudiaremos si realmente existe una gran diferencia entre los distintos puestos relacionados a los datos o si realmente existe un desorden en los nombres de cada cargo, ya que realmente las habilidades son distintas pero con otros nombre, es decir averiguaremos si un data engineer es lo mismo que un data scientist o big data analyst, data quality, o por el contrario cuales son sus diferencias.
+
+#Preguntas y problemas
+
+Es necesaria la estandarización de los datos para realizar un análisis más preciso  y conciso en relación a las características más relevantes que contiene el set de datos?
+
+Existe la posibilidad de realizar un modelo basado en ML para predecir características basadas en salario? ¿Qué tipo de modelo cree usted que sería el adecuado?
+
+¿Qué tipo de beneficios crees que aportará la exploración y posterior aprendizaje automático de los datos capturados?
+
+Basado en el análisis estadístico de los datos se podría afirmar que de acuerdo a la cantidad de empleados de cada empresa, está entrega mejores beneficios de acuerdo a su tamaño?
+
+¿Se puede predecir el rango salarial que tendrá un ingeniero de software dentro de los siguientes años?
+
+Se pueden crear modelos que midan la tasa de cambio o incorporación de las nuevas habilidades que les van a solicitando a los postulantes. Es sabido que en 
+
+<<<<<<< HEAD
 Es decir cuando se quieren analizar de forma más especificas los cargos relacionados a los datos nos encontramos con una granularidad muy grandes de cargos, esto puede ser más interesante de analizar en un futuro y por lo tanto llegarnos a plantear ciertas preguntas que se responderán en un hito futuro con otro tipo de análisis. ¿Por qué existen tantas granularidades en los cargos relacionados a los datos?, ¿Qué skills/habilidades se requieren para cada tipo de cargo? con estás preguntas  estudiaremos si realmente existe una gran diferencia entre los distintos puestos relacionados a los datos o si realmente existe un desorden en los nombres de cada cargo, ya que realmente las habilidades son distintas pero con otros nombre, es decir averiguaremos si un data engineer es lo mismo que un data scientist o big data analyst, data quality, o por el contrario cuales son sus diferencias.
 
 
@@ -145,3 +163,5 @@ matrizCorrelacion <- cor(columnasNumericas)
 
 
 #4. Debe incluir un enlace al código fuente. El código fuente debe estar en un repositorio (GitLab o GitHub) donde todos los miembros del equipo participen. El repositorio debe estar visible para la evaluación. El código fuente utilizado debe mostrar todo lo utilizado generar sus estadísticas y análisis (e.g. por ej. generar la página usando jupyter notebook, o markdown R, o poner enlaces a sus scripts. Mientras más reproducible el trabajo, mejor. El código fuente no se cuenta dentro del largo de las 5 páginas). La calidad del código fuente será evaluada en términos de que permita replicar el estudio.
+=======
+>>>>>>> 4c8dbf5e6f07348adae0c4e9cdb6f69aa7af714c
