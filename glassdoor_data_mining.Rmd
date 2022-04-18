@@ -28,7 +28,7 @@ library(NLP)
 
 
 ```{r}
-glassdoor_data <- read.csv("dataset-glassdoor/glassdoor.csv", header = T, encoding = "UTF-8", as.is = F)
+glassdoor_data <- read.csv("C:/Users/jliza/Documents/dataset-glassdoor/glassdoor.csv", header = T, encoding = "UTF-8", as.is = F)
 ```
 
 ```{r}
@@ -38,7 +38,7 @@ dim(glassdoor_data)
 ```
 
 ```{r}
-tablaEmpresa<-glassdoor_data[,c("gaTrackerData.empName","gaTrackerData.industry","gaTrackerData.jobTitle","overview.competitors","overview.size","overview.foundedYear","overview.type","rating.recommendToFriend","rating.starRating","reviews","salary.salaries")]
+tablaEmpresa<-glassdoor_data[,c("gaTrackerData.empName","gaTrackerData.industry","gaTrackerData.jobTitle","overview.size","overview.foundedYear","overview.type","rating.recommendToFriend","rating.starRating","reviews","salary.salaries","header.rating","header.posted")]
 head(tablaEmpresa)
 
 # Las columnas mas importantes podrian ser gaTrackerData.empName que es la empresa que ofrece el empleo, overview.size la canitdad de empleados,gaTrackerData.industry es la industria donde se envuelve la empresa, overview.competitors cantidad de competidores para el puesto, salary.salaries salario del puesto de trabajo, gaTrackerData.jobTitle es el titulo del empleo, entre otras.
@@ -98,3 +98,50 @@ dataRelatedJobs[10:30, c("header.jobTitle")]
 Data Engineer, Data Scientist, ETL Developer,  Big Data Analyst, Data Quality, Database Administrator, Big Data Engineer, Spec Analitycs, etc, etc...
 
 Es decir cuando se quieren analizar de forma más especificas los cargos relacionados a los datos nos encontramos con una granularidad muy grandes de cargos, esto puede ser más interesante de analizar en un futuro y por lo tanto llegarnos a plantear ciertas preguntas que se responderán en un hito futuro con otro tipo de análisis. ¿Por qué existen tantas granularidades en los cargos relacionados a los datos?, ¿Qué skills/habilidades se requieren para cada tipo de cargo? con estás preguntas  estudiaremos si realmente existe una gran diferencia entre los distintos puestos relacionados a los datos o si realmente existe un desorden en los nombres de cada cargo, ya que realmente las habilidades son distintas pero con otros nombre, es decir averiguaremos si un data engineer es lo mismo que un data scientist o big data analyst, data quality, o por el contrario cuales son sus diferencias.
+
+
+
+
+```{r}
+
+# problema filtrar el dataset y considerar solamente los atributos numéricos.
+
+columnasNumericas <- tablaEmpresa[,unlist(lapply(tablaEmpresa, is.numeric))]
+head(columnasNumericas,8)
+```
+```{r}
+#Se crea una matriz de correlación a partir de las columnas numéricas.
+matrizCorrelacion <- cor(columnasNumericas)
+
+```
+#3. Preguntas y Problemas
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#4. Debe incluir un enlace al código fuente. El código fuente debe estar en un repositorio (GitLab o GitHub) donde todos los miembros del equipo participen. El repositorio debe estar visible para la evaluación. El código fuente utilizado debe mostrar todo lo utilizado generar sus estadísticas y análisis (e.g. por ej. generar la página usando jupyter notebook, o markdown R, o poner enlaces a sus scripts. Mientras más reproducible el trabajo, mejor. El código fuente no se cuenta dentro del largo de las 5 páginas). La calidad del código fuente será evaluada en términos de que permita replicar el estudio.
