@@ -1,0 +1,99 @@
+---
+title: "Proyecto Mineria de Datos Glassdoor Jobs"
+authors: "Integrantes:" "Rodrigo Pardo" "Jonathan Lizama" "Juan Aguilera"
+date: 'Fecha: 18-04-2022'
+output: html_document
+---
+
+# Planteamiento del problema y motivación
+
+En la actualidad la industria del software está creciendo de manera acelerada, la demanda en los distintos puestos de trabajo ha aumentado considerablemente a tal punto que las ofertas de profesionales no pueden satisfacer el ritmo de los nuevos puestos de trabajo en tecnología. Esto aplica no solo a nuestro país que según estimaciones existe una escasez del 30% de puestos de trabajos sin satisfacer, en Europa este fenómeno es aún peor llegando en España a tener 40% y en Alemania 35% de puestos sin suplir y se proyecta que a futuro estas cifras sólo van a aumentar.
+
+Debido a esto es que las empresas han elaborado distintas estrategias para atraer a los profesionales y los nuevos talentos, grandes salarios, buenas condiciones laborales, capacitaciones, beneficios laborales, son solo algunas de las medidas implementadas por estas compañías. A raíz de esto es que se han creado muchos sitios web especializados en reclutamiento para trabajos de tecnología, Glasdoor es una de estos sitios más populares en Europa donde todos los días aparecen nuevas ofertas de trabajos, por lo que para este proyecto haremos uso de un dataset que contiene la toda la información relevante de cada una de estas ofertas, esto nos permitirá realizar una exploración y análisis de estos datos en base a las habilidades requeridas, experiencia, salarios, valoraciones de las empresas, comentarios de los trabajadores o postulantes, beneficios, perfiles, etc. Lo que nos llevará a realizar un estudio de la situación actual de trabajos en tecnología en Europa. Además de comparar los resultados con estudios realizados en Chile y Latinoamérica para establecer las similitudes y diferencias que puedan existir.
+
+# Exploración de Datos
+
+El dataset que se decidió usar fue obtenido de Kaggle, es un conjunto de datos que se creó haciendo web scraping del sitio de reclutamiento Glassdoor, obteniendo más de 160 mil trabajos en el dataset en los cuales se almacenaron atributos como el cargo, la descripción y título de los trabajos, beneficios, compañía, rating, salarios, tiempo, comentarios, etc. Podemos hacernos una pequeña idea del conjunto de datos si analizamos la web de Glassdoor y ver de qué forma está compuesta, ya que los datos fueron extraídos directamente desde el sitio. Se debe considerar esto solo como la primera aproximación para comprender el problema, los datos y su estructura, posterior a esto se realizará una exploración del conjunto de datos para estudiar y comprender mejor el dataset que se analizará.
+
+
+```{r}
+# Paquetes requeridos
+library(plyr)
+library(dplyr)
+library(sjmisc)
+library(readr)
+library(tm)
+```
+
+
+```{r}
+glassdoor_data <- read.csv("dataset-glassdoor/glassdoor.csv", header = T, encoding = "UTF-8", as.is = F)
+```
+
+```{r}
+dim(glassdoor_data)
+
+# Ahora observaremos cual es la dimensión del dataset mas grande, que en este caso es glassdoor.csv, el cual tiene una dimensión de: 165290 filas y 163 columnas.
+```
+
+```{r}
+tablaEmpresa<-glassdoor_data[,c("gaTrackerData.empName","gaTrackerData.industry","gaTrackerData.jobTitle","overview.competitors","overview.size","overview.foundedYear","overview.type","rating.recommendToFriend","rating.starRating","reviews","salary.salaries")]
+head(tablaEmpresa)
+
+# Las columnas mas importantes podrian ser gaTrackerData.empName que es la empresa que ofrece el empleo, overview.size la canitdad de empleados,gaTrackerData.industry es la industria donde se envuelve la empresa, overview.competitors cantidad de competidores para el puesto, salary.salaries salario del puesto de trabajo, gaTrackerData.jobTitle es el titulo del empleo, entre otras.
+```
+
+```{r}
+diferencia_salario<-unique(glassdoor_data$salary.salaries)
+diferencia_salario[c(1,147150)]
+#Una informacion que podría ser importante puede ser, la diferencia salarial entre el menor valor que es 2483 y el mayor que es 52079, la moneda que se esta utilizando es la moneda del reino unido.
+```
+
+```{r}
+# a<-glassdoor_data$header.jobTitle
+# dtm.sw <- DocumentTermMatrix(a)
+```
+
+En este ejercicio se filtraron los Títulos de los trabajos por la posición que se buscaba, sin embargo esta columna no se encotraba normalizada, por lo que por ejemplo si buscabamos por busqueda exacta el puesto de Sofware Engineer, no se muestra el total de puestos para este trabajo puestos que existian por ejemplo Backend Software Engineer los cuales no iban a figurar por búsqueda exacta. Por lo que se recurrió a la función grepl, esta funcion realiza un includes por cada titulo de trabajo reflejando de forma exacta las palabras buscadas. Es por esto que se estableció de forma manual las posiciones a buscar y su número de ofertas de trabajo, obteniendo los siguentes resultados:
+
+```{r}
+softwareEngineers <- dplyr::filter(glassdoor_data, grepl("Software Engineer", `header.jobTitle`, ignore.case = TRUE))
+productManagers <- dplyr::filter(glassdoor_data, grepl("Product Manager", `header.jobTitle`,  ignore.case = TRUE))
+dataScientist <- dplyr::filter(glassdoor_data, grepl("Data Scientist", `header.jobTitle`,  ignore.case = TRUE))
+etlEngineers <- dplyr::filter(glassdoor_data, grepl("ETL", `header.jobTitle`,  ignore.case = TRUE))
+devopsEngineers <- dplyr::filter(glassdoor_data, grepl("DevOps", `header.jobTitle`,  ignore.case = TRUE))
+projectManagers <- dplyr::filter(glassdoor_data, grepl("Project Manager", `header.jobTitle`,  ignore.case = TRUE))
+dataEngineers <- dplyr::filter(glassdoor_data, grepl("Data Engineer", `header.jobTitle`,  ignore.case = TRUE))
+
+puestosTrabajos = data.frame("Posición" = c("Software Engineer", "Product Manager", "Data Scientist", "ETL Engineer", "DevOps", "Project Manager", "Data Engineer"), "Cantidad" = c(nrow(softwareEngineers),  nrow(productManagers), nrow(dataScientist), nrow(etlEngineers), nrow(devopsEngineers), nrow(projectManagers), nrow(dataEngineers)))
+
+puestosTrabajosMasDemandados <- puestosTrabajos[order(-puestosTrabajos$Cantidad), ]
+puestosTrabajosMasDemandados
+```
+Como se puede observar la posición de desarrollador de software en diferentes lenguajes y experiencia (junior, senior, etc) es el cargo más demandado junto a project manager, sin embargo también se encontró un fenómeno bastante interesante, resulta que cuando se buscan cargos relaciados a los datos, existe una granuaridad bastante extraña que veremos en el siguiente ejercicio.
+
+```{r}
+library(ggplot2)  # cargamos la librería ggplot2 para la vizualización de datos.
+vacantes <- puestosTrabajos$Posición
+ggplot(puestosTrabajos) +   # asociamos un data frame a ggplot
+geom_bar(aes(x = Cantidad , y = vacantes , fill = vacantes), stat="identity") + theme_bw(base_size = 12)+
+  ggtitle("Oferta Laboral Diciembre Del 2019 ") + # título
+  xlab("Cantidad de oferta") + ylab("Puestos de Trabajo")  # etiquetas
+```
+
+
+```{r}
+# Para este ejercicios vamos a intentar ver cuantos trabajos relacionados a datos podemos encontrar
+dataRelatedJobs <- dplyr::filter(glassdoor_data, grepl("data", `header.jobTitle`, ignore.case = TRUE))
+nrow(dataRelatedJobs)
+```
+
+Como se puede ver, solamente en trabajos relacionados a datos existen casi 26 mil ofertas, sin embargo como se comentaba anteriormente para estas ofertas ocurre un fenómeno bastante extraño, y es que existen muchos cargos o posiciones distintas en relación a trabajos con datos, de hecho con mostrar solamente una muestra muy pequeña nos podemos dar cuenta de esto:
+
+```{r}
+dataRelatedJobs[10:30, c("header.jobTitle")]
+```
+
+Data Engineer, Data Scientist, ETL Developer,  Big Data Analyst, Data Quality, Database Administrator, Big Data Engineer, Spec Analitycs, etc, etc...
+
+Es decir cuando se quieren analizar de forma más especificas los cargos relacionados a los datos nos encontramos con una granularidad muy grandes de cargos, esto puede ser más interesante de analizar en un futuro y por lo tanto llegarnos a plantear ciertas preguntas que se responderán en un hito futuro con otro tipo de análisis. ¿Por qué existen tantas granularidades en los cargos relacionados a los datos?, ¿Qué skills/habilidades se requieren para cada tipo de cargo? con estás preguntas  estudiaremos si realmente existe una gran diferencia entre los distintos puestos relacionados a los datos o si realmente existe un desorden en los nombres de cada cargo, ya que realmente las habilidades son distintas pero con otros nombre, es decir averiguaremos si un data engineer es lo mismo que un data scientist o big data analyst, data quality, o por el contrario cuales son sus diferencias.
