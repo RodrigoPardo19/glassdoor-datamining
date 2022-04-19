@@ -1,8 +1,14 @@
 ---
 title: "Proyecto Mineria de Datos Glassdoor Jobs"
-authors: "Integrantes:" "Rodrigo Pardo" "Jonathan Lizama" "Juan Aguilera"
+author: 'Rodrigo Pardo, Jonathan Lizama, Juan Aguilera'
 date: 'Fecha: 18-04-2022'
-output: html_document
+output: 
+  html_document:
+    number_sections: yes
+    theme: paper
+    toc: yes
+  pdf_document:
+    toc: yes
 ---
 
 # Planteamiento del problema y motivación
@@ -36,8 +42,8 @@ glassdoor_data <- read.csv("dataset-glassdoor/glassdoor.csv", header = T, encodi
 ```{r}
 dim(glassdoor_data)
 
-# Ahora observaremos cual es la dimensión del dataset mas grande, que en este caso es glassdoor.csv, el cual tiene una dimensión de: 165290 filas y 163 columnas.
 ```
+Ahora observamos cual es la dimensión del dataset mas grande, que en este caso es glassdoor.csv, el cual tiene una dimensión de: 165290 filas y 163 columnas.
 
 El rango de fecha que abarcan los trabajos que se utilizarán en el dataset es:
 ```{r}
@@ -49,16 +55,20 @@ fechasTrabajosPublicados[length(fechasTrabajosPublicados), c("header.posted")]
 
 ```{r}
 tablaEmpresa<-glassdoor_data[,c("gaTrackerData.empName","gaTrackerData.industry","gaTrackerData.jobTitle","overview.size","overview.foundedYear","overview.type","rating.recommendToFriend","rating.starRating","reviews","salary.salaries","header.rating","header.posted")]
-head(tablaEmpresa)
-
-# Las columnas mas importantes podrian ser gaTrackerData.empName que es la empresa que ofrece el empleo, overview.size la canitdad de empleados,gaTrackerData.industry es la industria donde se envuelve la empresa, overview.competitors cantidad de competidores para el puesto, salary.salaries salario del puesto de trabajo, gaTrackerData.jobTitle es el titulo del empleo, entre otras.
+names(tablaEmpresa)
 ```
+
+Las columnas mas importantes podrian ser gaTrackerData.empName que es la empresa que ofrece el empleo, overview.size la canitdad de empleados,gaTrackerData.industry es la industria donde se envuelve la empresa, overview.competitors cantidad de competidores para el puesto, salary.salaries salario del puesto de trabajo, gaTrackerData.jobTitle es el titulo del empleo, entre otras.
+
 
 ```{r}
 diferencia_salario<-unique(glassdoor_data$salary.salaries)
 diferencia_salario[c(1,147150)]
-#Una informacion que podría ser importante puede ser, la diferencia salarial entre el menor valor que es 2483 y el mayor que es 52079, la moneda que se esta utilizando es la moneda del reino unido.
+
 ```
+
+Una informacion que podría ser importante puede ser, la diferencia salarial entre el menor valor que es 2483 y el mayor que es 52079, la moneda que se esta utilizando es la moneda del reino unido.
+
 
 En este ejercicio se filtraron los Títulos de los trabajos por la posición que se buscaba, sin embargo esta columna no se encotraba normalizada, por lo que por ejemplo si buscabamos por busqueda exacta el puesto de Sofware Engineer, no se muestra el total de puestos para este trabajo puestos que existian por ejemplo Backend Software Engineer los cuales no iban a figurar por búsqueda exacta. Por lo que se recurrió a la función grepl, esta funcion realiza un includes por cada titulo de trabajo reflejando de forma exacta las palabras buscadas. Es por esto que se estableció de forma manual las posiciones a buscar y su número de ofertas de trabajo, obteniendo los siguentes resultados:
 
@@ -121,28 +131,13 @@ Como se puede ver, solamente en trabajos relacionados a datos existen casi 26 mi
 dataRelatedJobs[10:30, c("header.jobTitle")]
 ```
 
-
 Data Engineer, Data Scientist, ETL Developer,  Big Data Analyst, Data Quality, Database Administrator, Big Data Engineer, Spec Analitycs, etc, etc...
 Es decir cuando se quieren analizar de forma más especificas los cargos relacionados a los datos nos encontramos con una granularidad muy grandes de cargos, esto puede ser más interesante de analizar en un futuro y por lo tanto llegarnos a plantear ciertas preguntas que se responderán en un hito futuro con otro tipo de análisis. ¿Por qué existen tantas granularidades en los cargos relacionados a los datos?, ¿Qué skills/habilidades se requieren para cada tipo de cargo? con estás preguntas  estudiaremos si realmente existe una gran diferencia entre los distintos puestos relacionados a los datos o si realmente existe un desorden en los nombres de cada cargo, ya que realmente las habilidades son distintas pero con otros nombre, es decir averiguaremos si un data engineer es lo mismo que un data scientist o big data analyst, data quality, o por el contrario cuales son sus diferencias.
 
-#Preguntas y problemas
-
-Es necesaria la estandarización de los datos para realizar un análisis más preciso  y conciso en relación a las características más relevantes que contiene el set de datos?
-
-Existe la posibilidad de realizar un modelo basado en ML para predecir características basadas en salario? ¿Qué tipo de modelo cree usted que sería el adecuado?
-
-¿Qué tipo de beneficios crees que aportará la exploración y posterior aprendizaje automático de los datos capturados?
-
-Basado en el análisis estadístico de los datos se podría afirmar que de acuerdo a la cantidad de empleados de cada empresa, está entrega mejores beneficios de acuerdo a su tamaño?
-
-¿Se puede predecir el rango salarial que tendrá un ingeniero de software dentro de los siguientes años?
-
-Se pueden crear modelos que midan la tasa de cambio o incorporación de las nuevas habilidades que les van a solicitando a los postulantes. Es sabido que en 
-
-
 Es decir cuando se quieren analizar de forma más especificas los cargos relacionados a los datos nos encontramos con una granularidad muy grandes de cargos, esto puede ser más interesante de analizar en un futuro y por lo tanto llegarnos a plantear ciertas preguntas que se responderán en un hito futuro con otro tipo de análisis. ¿Por qué existen tantas granularidades en los cargos relacionados a los datos?, ¿Qué skills/habilidades se requieren para cada tipo de cargo? con estás preguntas  estudiaremos si realmente existe una gran diferencia entre los distintos puestos relacionados a los datos o si realmente existe un desorden en los nombres de cada cargo, ya que realmente las habilidades son distintas pero con otros nombre, es decir averiguaremos si un data engineer es lo mismo que un data scientist o big data analyst, data quality, o por el contrario cuales son sus diferencias.
 
 
+Para el siguiente ejercicio vamos a analizar datos relacionados entre el rating de las empresas, los salarios y las recomendaciones de los empleados a sus conocidos o amigos.
 
 ```{r}
 #Lo primero que se realiza es comprobar que datos dentro del dataSet "glassdoor_data" se encuentran en blanco o inexistentes 
@@ -200,59 +195,9 @@ matrizCorrelacion
 correlacionBeneficios <- round(matrizCorrelacion["rating.starRating", ], 2)
 correlacionBeneficios
 ```
+
 Como podemos observar en la matriz de correlación los elementos que son tendencias a la hora de defir la categoria o ranking de una empresa informática, tiene estrecha relación con recomendación de amigos, de esto se puede inferir que puede ser una atraves de una charla,red social, etc.Tambien es importante recalcar el prestigio que tiene esta por medio de su año de fundación.
 
-```{r}
-
-#Salarios: salary.salaries
-#Rating:  rating.starRating  
-
-# Muestra los primeros 8 datos y las columnas seleccionadas
-tablaEmpresa[0:8, c("salary.salaries","rating.starRating")]
-
-
-# si mientras mas sueldos pagan mas rating tienen
-
-# beneficios y rating
-
-
-# diferencia si la empresa tienen mejor rating por tener mejores beneficios o por el sueldo.
-
-
-```
-#3. Preguntas y Problemas
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#4. Debe incluir un enlace al código fuente. El código fuente debe estar en un repositorio (GitLab o GitHub) donde todos los miembros del equipo participen. El repositorio debe estar visible para la evaluación. El código fuente utilizado debe mostrar todo lo utilizado generar sus estadísticas y análisis (e.g. por ej. generar la página usando jupyter notebook, o markdown R, o poner enlaces a sus scripts. Mientras más reproducible el trabajo, mejor. El código fuente no se cuenta dentro del largo de las 5 páginas). La calidad del código fuente será evaluada en términos de que permita replicar el estudio.
-
-Es decir cuando se quieren analizar de forma más especificas los cargos relacionados a los datos nos encontramos con una granularidad muy grandes de cargos, esto puede ser más interesante de analizar en un futuro y por lo tanto llegarnos a plantear ciertas preguntas que se responderán en un hito futuro con otro tipo de análisis. ¿Por qué existen tantas granularidades en los cargos relacionados a los datos?, ¿Qué skills/habilidades se requieren para cada tipo de cargo? con estás preguntas  estudiaremos si realmente existe una gran diferencia entre los distintos puestos relacionados a los datos o si realmente existe un desorden en los nombres de cada cargo, ya que realmente las habilidades son distintas pero con otros nombre, es decir averiguaremos si un data engineer es lo mismo que un data scientist o big data analyst, data quality, o por el contrario cuales son sus diferencias.
 
 Para el seguiente ejercicio exploraremos los sectores operativos de las distintas empresas, para ver los 10 sectores que más demandan trabajos de tecnología:
 
@@ -272,14 +217,6 @@ sort(table(contadorIndustrias), decreasing = TRUE)[1:10]
 
 ```
 
-```{R}
-glassdoor_data$rating.starRating[glassdoor_data$rating.starRating == ""] <- NA
-ratingsSinNulos <- sectorSinNulos[!is.na(sectorSinNulos$rating.starRating),]
-
-
-```
-
-
 A continuación averiguaremos las valoraciones que dan los profesionales a las empresas donde han trabajado, esto lo haremos mediante un plot que nos permita visualizar los outliers e intentar eliminar valores que pudiesen dar los trabajadores sin hacer una valoración constructiva, es decir, el trabajador estaba enojado y le puso un 1.0 a la empresa. Esto haría que no pudiesemos ver un promedio de las valoraciones reales.
 
 ```{r}
@@ -292,8 +229,46 @@ sectorSinNulos <- glassdoor_data[!is.na(glassdoor_data$overview.type),]
 ratingsSinNulos <- sectorSinNulos[!is.na(sectorSinNulos$rating.starRating),]
 
 sectores <- filter(ratingsSinNulos, overview.type == "Company - Public" | overview.type == "Company - Private")
-sectores2 <- sectores[, c("overview.type", "rating.starRating")]
-sectores2
-plot(sectores2$overview.type, sectores2$rating.starRating, ylim=c(0,5))
+
+plot(sectores$overview.type, sectores$rating.starRating, ylim=c(0,5))
 ```
 Los resultados obtenios es que las compañias privadas tienen una mayor cantidad de valoraciones que las publicas, sin embargos ambas estan a la par en el rating, consiguiendo una media de 3.6.
+
+
+# Preguntas y problemas
+
+- Es necesaria la estandarización de los datos para realizar un análisis más preciso  y conciso en relación a las características más relevantes que contiene el set de datos?
+
+- Existe la posibilidad de realizar un modelo basado en ML para predecir características basadas en salario? ¿Qué tipo de modelo cree usted que sería el adecuado?
+
+- ¿Qué tipo de beneficios crees que aportará la exploración y posterior aprendizaje automático de los datos capturados?
+
+- Basado en el análisis estadístico de los datos se podría afirmar que de acuerdo a la cantidad de empleados de cada empresa, está entrega mejores beneficios de acuerdo a su tamaño?
+
+- ¿Se puede predecir el rango salarial que tendrá un ingeniero de software dentro de los siguientes años?
+
+- Se pueden crear modelos que midan la tasa de cambio o incorporación de las nuevas habilidades que les van a solicitando a los postulantes. Es sabido que en tecnología están constantemente saliendo nuevas tecnologías por lo que es todo muy cambiante, por lo que hacer un modelo que mida esta tasa de aparición o cambio de las nuevas tecnologías sería una métrica o modelo muy interesante de estudiar.
+
+# Contribuciones
+
+**Rodrigro Pardo**
+- Elaboración de la problematica y la motivación junto a Juan Aguilera.
+- En la sección de exploración de datos realizó el filtrado de los cargos que más se solicitan.
+- En la sección de industrias que más empleos generan en el mundo de la tecnología
+- Rango de fechas de los trabajos analizados
+- Análisis de los trabajos relacionados con datos y su granularidad.
+
+
+**Jonathan Lizama**
+- Elaboración de un gráfico de los puestos de trabajo más buscados vs la cantidad que estos se buscaron en el dataset.
+- Elaboración de las preguntas.
+- Elaboración de correlaciones de datos en relación al ranking de empresas.
+- Ordenar descendentemente los cargos más demandados
+
+**Juan Aguilera**
+- Junto a Rodrigo elaboró la problematica y la motivación
+- En la expedición de datos elaboró la dimensión de del dataset que se utilizó.
+- Simplificó la visualización de algunas de las columnas más importantes.
+- Busco los salarios que aparecen en el dataset para saber cuales son los valores extremos y así poder sacar la diferencia.
+
+enlace: https://github.com/RodrigoPardo19/glassdoor-datamining
