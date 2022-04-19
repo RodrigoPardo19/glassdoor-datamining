@@ -18,6 +18,7 @@ El dataset que se decidió usar fue obtenido de Kaggle, es un conjunto de datos 
 
 ```{r}
 # Paquetes requeridos
+library(tidyverse)
 library(plyr)
 library(dplyr)
 library(sjmisc)
@@ -36,6 +37,14 @@ dim(glassdoor_data)
 # Ahora observaremos cual es la dimensión del dataset mas grande, que en este caso es glassdoor.csv, el cual tiene una dimensión de: 165290 filas y 163 columnas.
 ```
 
+El rango de fecha que abarcan los trabajos que se utilizarán en el dataset es:
+```{r}
+fechasTrabajosPublicados <- glassdoor_data[order(as.Date(glassdoor_data$header.posted, format="%b %d, %Y")),]
+fechasTrabajosPublicados[1, c("header.posted")]
+fechasTrabajosPublicados[length(fechasTrabajosPublicados), c("header.posted")]
+```
+
+
 ```{r}
 tablaEmpresa<-glassdoor_data[,c("gaTrackerData.empName","gaTrackerData.industry","gaTrackerData.jobTitle","overview.competitors","overview.size","overview.foundedYear","overview.type","rating.recommendToFriend","rating.starRating","reviews","salary.salaries")]
 head(tablaEmpresa)
@@ -47,11 +56,6 @@ head(tablaEmpresa)
 diferencia_salario<-unique(glassdoor_data$salary.salaries)
 diferencia_salario[c(1,147150)]
 #Una informacion que podría ser importante puede ser, la diferencia salarial entre el menor valor que es 2483 y el mayor que es 52079, la moneda que se esta utilizando es la moneda del reino unido.
-```
-
-```{r}
-# a<-glassdoor_data$header.jobTitle
-# dtm.sw <- DocumentTermMatrix(a)
 ```
 
 En este ejercicio se filtraron los Títulos de los trabajos por la posición que se buscaba, sin embargo esta columna no se encotraba normalizada, por lo que por ejemplo si buscabamos por busqueda exacta el puesto de Sofware Engineer, no se muestra el total de puestos para este trabajo puestos que existian por ejemplo Backend Software Engineer los cuales no iban a figurar por búsqueda exacta. Por lo que se recurrió a la función grepl, esta funcion realiza un includes por cada titulo de trabajo reflejando de forma exacta las palabras buscadas. Es por esto que se estableció de forma manual las posiciones a buscar y su número de ofertas de trabajo, obteniendo los siguentes resultados:
@@ -81,6 +85,27 @@ geom_bar(aes(x = Cantidad , y = vacantes , fill = vacantes), stat="identity") + 
   xlab("Cantidad de oferta") + ylab("Puestos de Trabajo")  # etiquetas
 ```
 
+Tecnologías más demandadas
+
+```{r}
+java <- dplyr::filter(glassdoor_data, grepl("Java", `header.jobTitle`, ignore.case = TRUE))
+php <- dplyr::filter(glassdoor_data, grepl("Php", `header.jobTitle`,  ignore.case = TRUE))
+python <- dplyr::filter(glassdoor_data, grepl("Python", `header.jobTitle`,  ignore.case = TRUE))
+go <- dplyr::filter(glassdoor_data, grepl("Go", `header.jobTitle`,  ignore.case = TRUE))
+html <- dplyr::filter(glassdoor_data, grepl("HTML", `header.jobTitle`,  ignore.case = TRUE))
+sql <- dplyr::filter(glassdoor_data, grepl("SQL", `header.jobTitle`,  ignore.case = TRUE))
+elixir <- dplyr::filter(glassdoor_data, grepl("Elixir", `header.jobTitle`,  ignore.case = TRUE))
+ruby <- dplyr::filter(glassdoor_data, grepl("Ruby", `header.jobTitle`,  ignore.case = TRUE))
+cloud <- dplyr::filter(glassdoor_data, grepl("Cloud", `header.jobTitle`,  ignore.case = TRUE))
+aws <- dplyr::filter(glassdoor_data, grepl("Aws", `header.jobTitle`,  ignore.case = TRUE))
+
+tecnologias = data.frame("Tecnología" = c("Java", "PHP", "Python", "Go", "HTML", "SQL", "Elixir", "Ruby", "Cloud", "AWS"), "Cantidad" = c(nrow(java),  nrow(php), nrow(python), nrow(go), nrow(html), nrow(sql), nrow(elixir), nrow(ruby), nrow(cloud), nrow(aws)))
+
+tecnologiasDemandadas <- tecnologias[order(-tecnologias$Cantidad), ]
+
+tecnologiasDemandadas
+```
+
 
 ```{r}
 # Para este ejercicios vamos a intentar ver cuantos trabajos relacionados a datos podemos encontrar
@@ -97,3 +122,47 @@ dataRelatedJobs[10:30, c("header.jobTitle")]
 Data Engineer, Data Scientist, ETL Developer,  Big Data Analyst, Data Quality, Database Administrator, Big Data Engineer, Spec Analitycs, etc, etc...
 
 Es decir cuando se quieren analizar de forma más especificas los cargos relacionados a los datos nos encontramos con una granularidad muy grandes de cargos, esto puede ser más interesante de analizar en un futuro y por lo tanto llegarnos a plantear ciertas preguntas que se responderán en un hito futuro con otro tipo de análisis. ¿Por qué existen tantas granularidades en los cargos relacionados a los datos?, ¿Qué skills/habilidades se requieren para cada tipo de cargo? con estás preguntas  estudiaremos si realmente existe una gran diferencia entre los distintos puestos relacionados a los datos o si realmente existe un desorden en los nombres de cada cargo, ya que realmente las habilidades son distintas pero con otros nombre, es decir averiguaremos si un data engineer es lo mismo que un data scientist o big data analyst, data quality, o por el contrario cuales son sus diferencias.
+
+Para el seguiente ejercicio exploraremos los sectores operativos de las distintas empresas, para ver los 10 sectores que más demandan trabajos de tecnología:
+
+```{r}
+# Cantidad de industrias distintas que se registraron en los trabajos
+length(unique(glassdoor_data$overview.industry))
+
+# tratamiento para transformar las industras con cadenas en blanco "" en valores NA
+glassdoor_data$overview.industry[glassdoor_data$overview.industry == ""] <- NA
+
+# Se remueven los valores NA en el atributo industria
+industriasSinNulos <- glassdoor_data[!is.na(glassdoor_data$overview.industry),]
+nrow(industriasSinNulos)
+
+contadorIndustrias <- data.frame(industriasSinNulos$overview.industry)
+sort(table(contadorIndustrias), decreasing = TRUE)[1:10]
+
+```
+
+```{R}
+glassdoor_data$rating.starRating[glassdoor_data$rating.starRating == ""] <- NA
+ratingsSinNulos <- sectorSinNulos[!is.na(sectorSinNulos$rating.starRating),]
+
+
+```
+
+
+A continuación averiguaremos las valoraciones que dan los profesionales a las empresas donde han trabajado, esto lo haremos mediante un plot que nos permita visualizar los outliers e intentar eliminar valores que pudiesen dar los trabajadores sin hacer una valoración constructiva, es decir, el trabajador estaba enojado y le puso un 1.0 a la empresa. Esto haría que no pudiesemos ver un promedio de las valoraciones reales.
+
+```{r}
+
+glassdoor_data$rating.starRating[glassdoor_data$rating.starRating == ""] <- NA
+glassdoor_data$overview.type[glassdoor_data$overview.type == ""] <- NA
+
+#sector se refiere al sector privado o serctor público
+sectorSinNulos <- glassdoor_data[!is.na(glassdoor_data$overview.type),]
+ratingsSinNulos <- sectorSinNulos[!is.na(sectorSinNulos$rating.starRating),]
+
+sectores <- filter(ratingsSinNulos, overview.type == "Company - Public" | overview.type == "Company - Private")
+sectores2 <- sectores[, c("overview.type", "rating.starRating")]
+sectores2
+plot(sectores2$overview.type, sectores2$rating.starRating, ylim=c(0,5))
+```
+Los resultados obtenios es que las compañias privadas tienen una mayor cantidad de valoraciones que las publicas, sin embargos ambas estan a la par en el rating, consiguiendo una media de 3.6.
