@@ -119,17 +119,80 @@ Es decir cuando se quieren analizar de forma más especificas los cargos relacio
 
 
 
+```{r}
+#Lo primero que se realiza es comprobar que datos dentro del dataSet "glassdoor_data" se encuentran en blanco o inexistentes 
+sapply(tablaEmpresa, function(x) sum(is.na(x)))
+
+
+```
+```{r}
+
+cantidadNulosRecomendaciones <- sum(is.na(tablaEmpresa$rating.recommendToFriend))
+cantidadNulosSalario <- sum(is.na(tablaEmpresa$salary.salaries))
+cantidadNulosRating <- sum(is.na(tablaEmpresa$rating.starRating))
+cat("La cantidad de datos que se encuentran nulos son:", cantidadNulosRecomendaciones+cantidadNulosSalario+cantidadNulosRating, "datos")
+
+```
+```{r}
+tablaEmpresaCorregida = na.omit(tablaEmpresa)
+
+#Luego calculamos la media aritmetica para asignarlo a los valores NA del dataSet original 
+mediaFriend = round(mean(tablaEmpresaCorregida$rating.recommendToFriend))
+mediaRating = round(mean(tablaEmpresaCorregida$rating.starRating))
+mediaSalary = round(mean(tablaEmpresaCorregida$salary.salaries))
+
+# asiganamos el calculo de la media aritmetica correspondiente al valor de cada columna
+tablaEmpresa$rating.recommendToFriend[is.na(tablaEmpresa$rating.recommendToFriend)] = mediaFriend 
+tablaEmpresa$rating.starRating[is.na(tablaEmpresa$rating.starRating)] = mediaRating
+tablaEmpresa$salary.salaries[is.na(tablaEmpresa$salary.salaries)] = mediaFriend
+
+```
 
 ```{r}
 
-# problema filtrar el dataset y considerar solamente los atributos numéricos.
+# Para finalizar verificamos que ya no existan datos perdidos:
+sapply(tablaEmpresa, function(x) sum(is.na(x)))
 
-columnasNumericas <- tablaEmpresa[,unlist(lapply(tablaEmpresa, is.numeric))]
-head(columnasNumericas,8)
+
 ```
+
+```{r}
+
+# filtramos el dataset y consideramos solamente los atributos numéricos.
+columnasNumericas <- tablaEmpresa[,unlist(lapply(tablaEmpresa, is.numeric))]
+head(columnasNumericas,10)
+
+```
+
 ```{r}
 #Se crea una matriz de correlación a partir de las columnas numéricas.
 matrizCorrelacion <- cor(columnasNumericas)
+matrizCorrelacion
+```
+
+```{r}
+#Se obtienen los valores de correlación correspondientes solo al atributo Survived y se muestran.
+correlacionBeneficios <- round(matrizCorrelacion["rating.starRating", ], 2)
+correlacionBeneficios
+```
+Como podemos observar en la matriz de correlación los elementos que son tendencias a la hora de defir la categoria o ranking de una empresa informática, tiene estrecha relación con recomendación de amigos, de esto se puede inferir que puede ser una atraves de una charla,red social, etc.Tambien es importante recalcar el prestigio que tiene esta por medio de su año de fundación.
+
+```{r}
+
+#Salarios: salary.salaries
+#Rating:  rating.starRating  
+
+# Muestra los primeros 8 datos y las columnas seleccionadas
+tablaEmpresa[0:8, c("salary.salaries","rating.starRating")]
+
+
+# si mientras mas sueldos pagan mas rating tienen
+
+# beneficios y rating
+
+
+# diferencia si la empresa tienen mejor rating por tener mejores beneficios o por el sueldo.
+
 
 ```
 #3. Preguntas y Problemas
